@@ -1,67 +1,68 @@
 document.querySelector("#salvar").addEventListener("click", cadastrar)
 
-let lista_compra = []
+let lista_despesa = []
 
 window.addEventListener("load", () => { 
-    lista_compra = JSON.parse(localStorage.getItem("lista_compra")) || []
+    lista_despesa = JSON.parse(localStorage.getItem("lista_despesa")) || []
     atualizar()
   })
   
 document.querySelector("#pendentes").addEventListener("click", () => {
-  lista_compra = JSON.parse(localStorage.getItem("lista_compra")) || []
-  lista_compra = lista_compra.filter(compra => !compra.paga)
+  lista_despesa = JSON.parse(localStorage.getItem("lista_despesa")) || []
+  lista_despesa = lista_despesa.filter(despesa => !despesa.paga)
   atualizar()
 })
   
 document.querySelector("#pagas").addEventListener("click", () => {
-  lista_compra = JSON.parse(localStorage.getItem("lista_compra")) || []
-  lista_compra = lista_compra.filter(compra => compra.paga)
+  lista_despesa = JSON.parse(localStorage.getItem("lista_despesa")) || []
+  lista_despesa = lista_despesa.filter(despesa => despesa.paga)
   atualizar()
 })
 
 document.querySelector("#busca").addEventListener("keyup", () => {
-  lista_compra = JSON.parse(localStorage.getItem("lista_compra")) || []
-  const titulo = document.querySelector("#busca").value
-  lista_compra = lista_compra.filter(compra => compra.titulo.includes(titulo))
+  lista_despesa = JSON.parse(localStorage.getItem("lista_despesa")) || []
+  const nome = document.querySelector("#busca").value
+  lista_despesa = lista_despesa.filter(despesa => despesa.nome.includes(nome))
   atualizar()
 })
 
 function cadastrar() {
-    const modal = bootstrap.Modal.getInstance(document.querySelector("#cadastrarCompraModal"))
-    let titulo = document.querySelector("#titulo").value
-    let descricao = document.querySelector("#descricao").value
-    let preco = document.querySelector("#preco").value
-    let categoria = document.querySelector("#categoria").value
+    const modal = bootstrap.Modal.getInstance(document.querySelector("#cadastrarDespesaModal"))
+    let nome = document.querySelector("#nome").value
+    let endereco = document.querySelector("#endereco").value
     let data = document.querySelector("#data").value
-    let parcelada = document.querySelector("#parcelada").checked
-    let parcelas = document.querySelector("#parcelas").value
+    let litros = document.querySelector("#consumoAgua").value
+    let tipoUsuario = document.querySelector("#tipoUsuario").value
+    let qtdPessoas = document.querySelector("#qtdPessoas").value
+    let preco = document.querySelector("#preco").value
+    let observacoes = document.querySelector("#observacoes").value
 
-    const compra = {
+    const despesa = {
         id: Date.now(),
-        titulo: titulo,
-        descricao: descricao,
-        preco: preco,
-        categoria: categoria,
+        nome: nome,
+        endereco: endereco,
         data: data,
-        parcelada: parcelada,
-        parcelas: parcelas,
+        litros: litros,
+        tipoUsuario: tipoUsuario,
+        qtdPessoas: qtdPessoas,
+        preco: preco,
+        observacoes: observacoes,
         paga: false
     }
 
-    if (compra.titulo.length == 0) {
-      document.querySelector("#titulo").classList.add("is-invalid")
+    if (despesa.nome.length == 0) {
+      document.querySelector("#nome").classList.add("is-invalid")
       return
     }
     
-    document.querySelector("#button-cadastrar").setAttribute("data-bs-target", "#cadastrarCompraModal")
+    document.querySelector("#button-cadastrar").setAttribute("data-bs-target", "#cadastrarDespesaModal")
     toastFunction()
-    document.querySelector("#compras").innerHTML += gerarCard(compra)
+    document.querySelector("#despesas").innerHTML += gerarCard(despesa)
 
-    document.querySelector("#titulo").value = ""
-    //document.querySelector("#titulo").classList.remove("is-invalid")
-    document.querySelector("#descricao").value = ""
+    document.querySelector("#nome").value = ""
+    document.querySelector("#endereco").value = ""
 
-    lista_compra.push(compra)
+    lista_despesa.push(despesa)
 
     salvar()
 
@@ -70,19 +71,19 @@ function cadastrar() {
   
   
 function salvar() {
-    localStorage.setItem("lista_compra", JSON.stringify(lista_compra))
+    localStorage.setItem("lista_despesa", JSON.stringify(lista_despesa))
 }
 
 function atualizar() {
-  document.querySelector("#compras").innerHTML = ""
-  lista_compra.forEach((compra) => {
-    document.querySelector("#compras").innerHTML += gerarCard(compra)
+  document.querySelector("#despesas").innerHTML = ""
+  lista_despesa.forEach((despesa) => {
+    document.querySelector("#despesas").innerHTML += gerarCard(despesa)
   });
 }
 
 
 function apagar(id) {
-  lista_compra = lista_compra.filter((x) => {
+  lista_despesa = lista_despesa.filter((x) => {
      return x.id != id
   })
   salvar()
@@ -90,33 +91,32 @@ function apagar(id) {
 }
 
 function pagar(id) {
-  let compra = lista_compra.find((x) => {
+  let despesa = lista_despesa.find((x) => {
     return x.id == id
   })
 
-  compra.paga = true
+  despesa.paga = true
   salvar()
   atualizar()
 }
 
-function gerarCard(compra) {
+function gerarCard(despesa) {
     return `<div class="col-lg-3 col-md-6 col-12">
     <div class="card">
-      <div class="card-header">${compra.titulo}</div>
+      <div class="card-header">Despesa em nome de ${despesa.nome}</div>
       <div class="card-body">
-        <p class="card-text">${compra.descricao}</p>
-        <p class="card-text">Data da compra: ${compra.data ? compra.data : "Sem data"}</p>
-        <p class="card-text">Preço R$${compra.preco && compra.preco > 0 ? compra.preco : 0}</span></p>
-        <p class="card-text">
-          ${compra.parcelada != false && compra.parcelas > 1 ? compra.parcelas + " parcelas" : "Não parcelada"}
-        </p>
+        <p class="card-text">Endereço: ${despesa.endereco}</p>
+        <p class="card-text">Data da despesa: ${despesa.data ? despesa.data : "Sem data"}</p>
+        <p class="card-text">Consumo de água: ${despesa.litros} Litros</p>
+        <p class="card-text">Preço R$${despesa.preco}</span></p>
+        <p class="card-text">Observações: ${despesa.observacoes}</p>
         <p>
-          <span class="badge text-bg-warning">${compra.categoria}</span>
+          <span class="badge text-bg-warning">${despesa.tipoUsuario}</span>
         </p>
-        <a onclick="pagar(${compra.id})" class="btn btn-success ${compra.paga ? "disabled" : ""}">
+        <a onclick="pagar(${despesa.id})" class="btn btn-success ${despesa.paga ? "disabled" : ""}">
           <i class="bi bi-check-lg"></i>
         </a>
-        <a onclick="apagar(${compra.id})" class="btn btn-danger">
+        <a onclick="apagar(${despesa.id})" class="btn btn-danger">
           <i class="bi bi-trash"></i>
         </a>
       </div>
@@ -136,14 +136,6 @@ document.querySelector('#btnSwitch').addEventListener('click',()=>{
     }
 })
 
-
-document.querySelector('#parcelada').addEventListener('click',()=> {
-  if (document.querySelector('#parcelada').checked == false) {
-    document.querySelector('#parcelas').setAttribute("disabled","disabled")
-  } else {
-    document.querySelector('#parcelas').removeAttribute("disabled")
-  }
-})
 
 function toastFunction() {
   var x = document.getElementById("toast_add");
