@@ -88,30 +88,27 @@ function cadastrar() {
         paga: false
     }
 
-    if (despesa.nome.length == 0) {
-      document.querySelector("#nome").classList.add("is-invalid")
-      return
-    }
 
-    if (despesa.endereco.length == 0) {
-      document.querySelector("#endereco").classList.add("is-invalid")
+    if (despesa.nome.length == 0 || despesa.endereco.length == 0 || despesa.data == "" || despesa.litros == "" || despesa.preco == "") {
+      if (despesa.nome.length == 0) {
+        document.querySelector("#nome").classList.add("is-invalid")
+      }
+      if (despesa.endereco.length == 0) {
+        document.querySelector("#endereco").classList.add("is-invalid")
+      }
+      if (despesa.data == "") {
+        document.querySelector("#data").classList.add("is-invalid")
+      }
+      if (despesa.litros == "") {
+        document.querySelector("#consumoAgua").classList.add("is-invalid")
+      }
+      if (despesa.preco == "") {
+        document.querySelector("#preco").classList.add("is-invalid")
+      }
+      console.log("passei aqui")
+      toastFunctionErr()
       return
-    }
-
-    if (despesa.data == "") {
-      document.querySelector("#data").classList.add("is-invalid")
-      return
-    }
-
-    if (despesa.litros == "") {
-      document.querySelector("#consumoAgua").classList.add("is-invalid")
-      return
-    }
-    
-    if (despesa.preco == "") {
-      document.querySelector("#preco").classList.add("is-invalid")
-      return
-    }
+  }
     
     document.querySelector("#button-cadastrar").setAttribute("data-bs-target", "#cadastrarDespesaModal")
     toastFunction()
@@ -151,6 +148,10 @@ function atualizar() {
 
 
 function apagar(id) {
+  var x = document.getElementById("toast_del");
+  x.className = "show";
+  setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+
   lista_despesa = lista_despesa.filter((x) => {
      return x.id != id
   })
@@ -215,17 +216,22 @@ document.querySelector('#button-consumo').addEventListener('click', () => {
   document.querySelector('#totalGasto').textContent = "Total de gastos: R$ " + totalGasto
 })
 
-
 function toastFunction() {
   var x = document.getElementById("toast_add");
   x.className = "show";
-  setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+  setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
 }
 
 function toastFunctionLogin() {
   var x = document.getElementById("toast_login");
   x.className = "show";
-  setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+  setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+}
+
+function toastFunctionErr() {
+  var x = document.getElementById("toast_err");
+  x.className = "show";
+  setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
 }
 
 function btnCheck() {
