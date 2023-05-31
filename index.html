@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="./main.css">
 
     <title>Water Save</title>
+    <link rel="icon" type="image/x-icon" href="./images/favicon.svg">
   </head>
 
   <body>
@@ -44,9 +45,19 @@
               </ul>
             </li>
           </ul>
+          <div class="btn-group">
+            <button id="nomeFiltro" type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+              Filtrar
+            </button>
+            <ul class="dropdown-menu">
+              <li><a id="filtroNome" class="dropdown-item" href="#">Nome</a></li>
+              <li><a id="filtroEndereco" class="dropdown-item" href="#">Endereço</a></li>
+              <li><a id="filtroData" class="dropdown-item" href="#">A partir de</a></li>
+            </ul>
+          </div>
           <form class="d-flex" role="search">
-            <input id="busca" class="form-control me-2" type="search" placeholder="Digite a despesa..." aria-label="buscar" />
-            <button class="btn btn-outline-success" type="submit"> Buscar </button>
+            <input id="busca" class="form-control me-2" type="search" placeholder="Selecione um filtro" aria-label="buscar" teste="aweaw" disabled />
+            <button id="buscar" class="btn btn-outline-success" type="submit" disabled> Buscar </button>
           </form>
           <button class="btn btn-dark shadow ms-2" id="btnSwitch"><i class="bi bi-brightness-high-fill"></i></button>
         </div>
@@ -155,7 +166,8 @@
           <div class="modal-body">
             <div class="row">
               <div class="mb-3">
-                <input id="nome" type="text" class="form-control" placeholder="Nome" aria-label="Nome" />
+                <p id="totalLitros">Total de litros: </p>
+                <p id="totalGasto">Total de gastos: R$</p>
               </div>
           </div>
           <div class="modal-footer">

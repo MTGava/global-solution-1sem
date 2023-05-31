@@ -19,12 +19,50 @@ document.querySelector("#pagas").addEventListener("click", () => {
   atualizar()
 })
 
-document.querySelector("#busca").addEventListener("keyup", () => {
+document.querySelector("#busca").addEventListener("keyup", () => filtrar())
+document.querySelector("#buscar").addEventListener("click", () => filtrar())
+
+
+function filtrar() {
   lista_despesa = JSON.parse(localStorage.getItem("lista_despesa")) || []
-  const nome = document.querySelector("#busca").value
-  lista_despesa = lista_despesa.filter(despesa => despesa.nome.includes(nome))
+  nomeFiltro = document.querySelector("#nomeFiltro").textContent
+  const busca = document.querySelector("#busca").value
+
+  switch (nomeFiltro) {
+    case 'Nome':
+      lista_despesa = lista_despesa.filter(despesa => despesa.nome.includes(busca))
+      break;
+    case 'Endereço':
+      lista_despesa = lista_despesa.filter(despesa => despesa.endereco.includes(busca))
+      break;
+    default:
+      lista_despesa = lista_despesa.filter(despesa => despesa.data > busca)
+  }
+
   atualizar()
+}
+
+document.querySelector("#filtroNome").addEventListener("click", () => {
+  filtrarPor("o nome", document.querySelector("#filtroNome").textContent)
 })
+document.querySelector("#filtroEndereco").addEventListener("click", () => {
+  filtrarPor("o endereço", document.querySelector("#filtroEndereco").textContent)
+})
+document.querySelector("#filtroData").addEventListener("click", () => {
+  filtrarPor("a data", document.querySelector("#filtroData").textContent)
+  document.querySelector("#busca").setAttribute("type", "date")
+})
+
+function filtrarPor(filtro, nomeFiltro) {
+  document.querySelector("#nomeFiltro").textContent = nomeFiltro
+  busca = document.querySelector("#busca")
+  busca.setAttribute("placeholder", `Digite ${filtro}...`)
+  busca.setAttribute("type", "search")
+  busca.removeAttribute("disabled")
+  document.querySelector('#buscar').removeAttribute("disabled")
+}
+
+
 
 function cadastrar() {
     const modal = bootstrap.Modal.getInstance(document.querySelector("#cadastrarDespesaModal"))
@@ -54,13 +92,38 @@ function cadastrar() {
       document.querySelector("#nome").classList.add("is-invalid")
       return
     }
+
+    if (despesa.endereco.length == 0) {
+      document.querySelector("#endereco").classList.add("is-invalid")
+      return
+    }
+
+    if (despesa.data == "") {
+      document.querySelector("#data").classList.add("is-invalid")
+      return
+    }
+
+    if (despesa.litros == "") {
+      document.querySelector("#consumoAgua").classList.add("is-invalid")
+      return
+    }
+    
+    if (despesa.preco == "") {
+      document.querySelector("#preco").classList.add("is-invalid")
+      return
+    }
     
     document.querySelector("#button-cadastrar").setAttribute("data-bs-target", "#cadastrarDespesaModal")
     toastFunction()
     document.querySelector("#despesas").innerHTML += gerarCard(despesa)
 
-    document.querySelector("#nome").value = ""
-    document.querySelector("#endereco").value = ""
+    
+    zerarInput(document.querySelector("#nome"))
+    zerarInput(document.querySelector("#endereco"))
+    zerarInput(document.querySelector("#data"))
+    zerarInput(document.querySelector("#preco"))
+    zerarInput(document.querySelector("#consumoAgua"))
+    zerarInput(document.querySelector("#qtdPessoas"))
 
     lista_despesa.push(despesa)
 
@@ -70,6 +133,11 @@ function cadastrar() {
   }
   
   
+function zerarInput(atributo) {
+  atributo.value = ""
+  atributo.classList.remove("is-invalid")
+}
+
 function salvar() {
     localStorage.setItem("lista_despesa", JSON.stringify(lista_despesa))
 }
@@ -134,6 +202,17 @@ document.querySelector('#btnSwitch').addEventListener('click',()=>{
         document.documentElement.setAttribute('data-bs-theme','dark')
         document.querySelector('#btnSwitch').innerHTML = '<i class="bi bi-brightness-high-fill"></i>'
     }
+})
+
+document.querySelector('#button-consumo').addEventListener('click', () => {
+  var totalLitros = 0;
+  var totalGasto = 0;
+  lista_despesa.forEach(despesa => {
+    totalLitros = parseInt(despesa.litros) + parseInt(totalLitros)
+    totalGasto = parseInt(despesa.preco) + parseInt(totalGasto)
+  })
+  document.querySelector('#totalLitros').textContent = "Total de Litros: " + totalLitros
+  document.querySelector('#totalGasto').textContent = "Total de gastos: R$ " + totalGasto
 })
 
 
