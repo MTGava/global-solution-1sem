@@ -105,7 +105,6 @@ function cadastrar() {
       if (despesa.preco == "") {
         document.querySelector("#preco").classList.add("is-invalid")
       }
-      console.log("passei aqui")
       toastFunctionErr()
       return
   }
@@ -160,6 +159,11 @@ function apagar(id) {
 }
 
 function pagar(id) {
+  
+  var x = document.getElementById("toast_success");
+  x.className = "show";
+  setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+
   let despesa = lista_despesa.find((x) => {
     return x.id == id
   })
